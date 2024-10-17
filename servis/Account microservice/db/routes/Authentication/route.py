@@ -6,8 +6,6 @@ from fastapi import HTTPException
 from ...auth.hash import hashed
 from ...auth.tokens import jwtcontroler
 
-from .models import TokensModels
-
 route = APIRouter()
 
 
@@ -33,7 +31,13 @@ def sign_up(
         json: the account has been created
     """
     if not pgsql.check_user_in_db(username):
-        pgsql.create_user(firstname, lastname, username, password, role=['user'])
+        pgsql.create_user(
+            firstname,
+            lastname,
+            username,
+            password,
+            role=['user'],
+            )
         return {'message': 'the account has been created'}
     raise HTTPException(
         409,
@@ -63,7 +67,10 @@ def sign_in(
     if user:
         if hashed.chech_hash(password, user.password):
             access_token = jwtcontroler.create_access_token(user.id, user.role)
-            refresh_token = jwtcontroler.create_refresh_token(user.id, user.role)
+            refresh_token = jwtcontroler.create_refresh_token(
+                user.id,
+                user.role,
+                )
 
             pgsql.add_tokens_in_bd(user.id, access_token, refresh_token)
 
@@ -80,7 +87,7 @@ def sign_out(access_token: str):
     """Маршрутизатор выхода.
 
     Args:
-        tokens_data (TokensModels): пара токенов
+        access_token (str): access_token
 
     Raises:
         HTTPException: 409
@@ -103,7 +110,7 @@ def validate(access_token: str):
     """Марщрутизатор проверки токена.
 
     Args:
-        tokens_data (TokensModels): модель токенов
+        access_token (str): access_token
 
     Raises:
         HTTPException: 400

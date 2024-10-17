@@ -1,3 +1,4 @@
+"""Файл по работе с хэш."""
 import bcrypt
 
 
@@ -17,10 +18,25 @@ class HashedData():
         Returns:
             str: хэшированный пароль
         """
-        return bcrypt.hashpw(password.encode('utf-8'), self.salt).decode('utf-8')
-    
+        return bcrypt.hashpw(
+            password.encode('utf-8'),
+            self.salt,
+            ).decode('utf-8')
+
     def chech_hash(self, password: str, hashed_password: str) -> bool:
-        return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8'))
+        """Валидность пароля.
+
+        Args:
+            password (str): пароль пользователя
+            hashed_password (str): хэшированный пароль
+
+        Returns:
+            bool: _description_
+        """
+        return bcrypt.checkpw(
+            password.encode('utf-8'),
+            hashed_password.encode('utf-8'),
+            )
 
 
 hashed = HashedData()

@@ -1,7 +1,7 @@
 """Точка входа."""
 import uvicorn
 from db.db import pgsql
-from db.routes.accaunt.route import route as route_one
+from db.routes.Authentication.route import route as route_one
 from fastapi import FastAPI
 
 app = FastAPI()

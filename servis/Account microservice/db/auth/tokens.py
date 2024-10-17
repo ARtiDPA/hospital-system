@@ -1,9 +1,12 @@
+"""Файл по работе с jwt токенами."""
 from jose import jwt
 from ..config import jwtsettings
 from datetime import datetime, timedelta
 
+
 class JwtControler():
-    """Класс по работе с токенами"""
+    """Класс по работе с токенами."""
+
     def __init__(self):
         """Init file."""
         self.jwt_sekret_key = jwtsettings.JWT_SEKRET_KEY

@@ -7,7 +7,6 @@ from .models import Base, User
 
 from db.auth.hash import hashed
 
-from typing import Union
 
 class PostgresDataBase():
     """Файл для работь с бд."""
