@@ -99,5 +99,21 @@ class PostgresDataBase():
         with Session(self.engine) as session:
             return session.query(User).filter(User.username == username).first()
 
+    def add_tokens_in_bd(self, user_id, access_token, refresh_token):
+        """Добавление токенов пользователю.
+
+        Args:
+            user_id (str): id пользователя
+            access_token (str): access_token
+            refresh_token (str): refresh_token
+        """
+        with Session(self.engine) as session:
+            user = session.query(User).filter(User.id == user_id).first()
+            user.access_token = access_token
+            user.refresh_token = refresh_token
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+
 
 pgsql = PostgresDataBase()

@@ -44,12 +44,30 @@ def sign_in(
     username: str,
     password: str,
 ):
+    """Маршрутизатор входа.
+
+    Args:
+        username (str): логин
+        password (str): пароль
+
+    Raises:
+        HTTPException: 409 пароли не совпадают
+        HTTPException: 404 пользователь не зарегистрирован
+
+    Returns:
+        json: access/refresh токены
+    """
     user = pgsql.get_user_by_username(username)
     if user:
         if hashed.chech_hash(password, user.password):
+            access_token = jwtcontroler.create_access_token(user.id)
+            refresh_token = jwtcontroler.create_refresh_token(user.id)
+
+            pgsql.add_tokens_in_bd(user.id, access_token, refresh_token)
+
             return {
-                'access token': jwtcontroler.create_access_token(user.id),
-                'refresh tokne': jwtcontroler.create_refresh_token(user.id),
+                'access_token': access_token,
+                'refresh_token': refresh_token,
             }
         raise HTTPException(403, "passwords don't match")
     raise HTTPException(404, 'the user is not registered')

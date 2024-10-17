@@ -30,3 +30,5 @@ class User(Base):
     username: Mapped[str] = mapped_column(String)
     password: Mapped[str] = mapped_column(String)
     accesslevel: Mapped[int] = mapped_column(Integer)
+    access_token: Mapped[str] = mapped_column(String, nullable=True)
+    refresh_token: Mapped[str] = mapped_column(String, nullable=True)
