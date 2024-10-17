@@ -7,6 +7,7 @@ from .models import Base, User
 
 from db.auth.hash import hashed
 
+
 class PostgresDataBase():
     """Файл для работь с бд."""
 
@@ -37,10 +38,11 @@ class PostgresDataBase():
 
     def create_user(
             self,
-            firstname,
-            lastname,
-            username,
-            password,
+            firstname: str,
+            lastname: str,
+            username: str,
+            password: str,
+            accesslevel: int,
             ) -> bool:
         """Добавление пользователя в бд.
 
@@ -60,6 +62,7 @@ class PostgresDataBase():
             lastname=lastname,
             username=username,
             password=password,
+            accesslevel=accesslevel,
             )
         with Session(self.engine) as session:
             try:
@@ -71,7 +74,7 @@ class PostgresDataBase():
             else:
                 return True
 
-    def get_user_by_username(self, username):
+    def check_user_in_db(self, username):
         """Проверка на наличие пользователя в БД.
 
         Args:
@@ -83,6 +86,18 @@ class PostgresDataBase():
         with Session(self.engine) as session:
             user = session.query(User).filter(User.username == username).first()
             return True if user else False
+
+    def get_user_by_username(self, username):
+        """Полечение данных о пользователе по логину.
+
+        Args:
+            username (str): логин
+
+        Returns:
+            User: данные о пользователе
+        """
+        with Session(self.engine) as session:
+            return session.query(User).filter(User.username == username).first()
 
 
 pgsql = PostgresDataBase()
