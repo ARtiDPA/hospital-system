@@ -7,6 +7,7 @@ from .models import Base, User
 
 from db.auth.hash import hashed
 
+from typing import Union
 
 class PostgresDataBase():
     """Файл для работь с бд."""
@@ -42,7 +43,7 @@ class PostgresDataBase():
             lastname: str,
             username: str,
             password: str,
-            accesslevel: int,
+            role: list[str],
             ) -> bool:
         """Добавление пользователя в бд.
 
@@ -51,6 +52,7 @@ class PostgresDataBase():
             lastname (str): фамилия
             username (str): имя аккаунта
             password (str): пароль
+            role (list): массив ролей
 
         Returns:
             bool: результат выполнения функции
@@ -62,7 +64,7 @@ class PostgresDataBase():
             lastname=lastname,
             username=username,
             password=password,
-            accesslevel=accesslevel,
+            role=role,
             )
         with Session(self.engine) as session:
             try:
@@ -99,7 +101,12 @@ class PostgresDataBase():
         with Session(self.engine) as session:
             return session.query(User).filter(User.username == username).first()
 
-    def add_tokens_in_bd(self, user_id, access_token, refresh_token):
+    def add_tokens_in_bd(
+            self,
+            user_id: str,
+            access_token: str,
+            refresh_token: str,
+            ):
         """Добавление токенов пользователю.
 
         Args:
@@ -111,6 +118,23 @@ class PostgresDataBase():
             user = session.query(User).filter(User.id == user_id).first()
             user.access_token = access_token
             user.refresh_token = refresh_token
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+
+    def delete_tokens_in_bd(
+            self,
+            user_id: str,
+    ):
+        """Удаление пары токенов.
+
+        Args:
+            user_id (str): айди пользователя
+        """
+        with Session(self.engine) as session:
+            user = session.query(User).filter(User.id == user_id).first()
+            user.access_token = ''
+            user.refresh_token = ''
             session.add(user)
             session.commit()
             session.refresh(user)

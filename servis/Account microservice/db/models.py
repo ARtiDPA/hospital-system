@@ -29,6 +29,6 @@ class User(Base):
     firstname: Mapped[str] = mapped_column(String)
     username: Mapped[str] = mapped_column(String)
     password: Mapped[str] = mapped_column(String)
-    accesslevel: Mapped[int] = mapped_column(Integer)
+    role: Mapped[list] = mapped_column(String)
     access_token: Mapped[str] = mapped_column(String, nullable=True)
     refresh_token: Mapped[str] = mapped_column(String, nullable=True)
