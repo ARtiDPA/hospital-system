@@ -74,8 +74,11 @@ def update_info(
 
 
 @route.get('Accounts')
-def get_all_accounts(access_token: str)
+def get_all_accounts(access_token: str, from_id: int, count: int):
     payload = jwtcontroler.validate_tokens(access_token)
     if payload:
+        print(payload)
         if 'admin' in payload.get('role'):
-            pass
+            return pgsql.get_all_user(from_id, count)
+        raise HTTPException(403, 'Forbidden')
+    raise HTTPException(400, 'Tokens error')

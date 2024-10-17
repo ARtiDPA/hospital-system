@@ -161,5 +161,9 @@ class PostgresDataBase():
             session.commit()
             session.refresh(user)
 
+    def get_all_user(self, from_id: int, count: int):
+        with Session(self.engine) as session:
+            users = session.query(User).filter(User.id >= from_id).limit(count).all()
+            return users
 
 pgsql = PostgresDataBase()
