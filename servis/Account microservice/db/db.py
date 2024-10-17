@@ -88,7 +88,7 @@ class PostgresDataBase():
             user = session.query(User).filter(User.username == username).first()
             return True if user else False
 
-    def get_user_by_username(self, username):
+    def get_user_by_username(self, username: str):
         """Полечение данных о пользователе по логину.
 
         Args:
@@ -99,6 +99,18 @@ class PostgresDataBase():
         """
         with Session(self.engine) as session:
             return session.query(User).filter(User.username == username).first()
+
+    def get_user_by_id(self, user_id: int):
+        """Полечение данных о пользователе по id.
+
+        Args:
+            user_id(int): id пользователя
+
+        Returns:
+            User: данные о пользователе
+        """
+        with Session(self.engine) as session:
+            return session.query(User).filter(User.id == user_id).first()
 
     def add_tokens_in_bd(
             self,
@@ -134,6 +146,17 @@ class PostgresDataBase():
             user = session.query(User).filter(User.id == user_id).first()
             user.access_token = ''
             user.refresh_token = ''
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+
+    def update_data(self, user_data: User):
+        with Session(self.engine) as session:
+            user = session.query(User).filter(User.id == user_data.id).first()
+            user.firstname = user_data.firstname
+            user.lastname = user_data.lastname
+            user.username = user_data.username
+            user.password = hashed.create_hash(user_data.password)
             session.add(user)
             session.commit()
             session.refresh(user)
